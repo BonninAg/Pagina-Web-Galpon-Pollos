@@ -1,0 +1,16 @@
+{
+  "hosting": {
+    "public": "configGalpon",
+    "ignore": [
+      "firebase.json",
+      "**/.*",
+      "**/node_modules/**"
+    ],
+    "rewrites": [
+      {
+        "source": "/",
+        "destination": "/configGalpon/index.html"
+      }
+    ]
+  }
+}

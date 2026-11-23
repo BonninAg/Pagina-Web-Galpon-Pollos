@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Configuración de Control - Galpón Avícola</title>
+    <!-- Hoja de estilos separada -->
+   <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+    <main class="container">
+        <!-- Cabecera simple -->
+        <header class="header">
+            <div>
+                <h1>Configuración de Parámetros del Galpón</h1>
+                <p>Define los rangos de temperatura, humedad, luz y horarios según la edad del lote.</p>
+            </div>
+            <div class="actions">
+                <button type="button" id="btnAddRow" class="btn btn-secondary">+ Agregar Etapa</button>
+                <button type="button" id="btnReset" class="btn btn-secondary">Restablecer</button>
+                <button type="button" id="btnSave" class="btn btn-primary">Guardar Configuración</button>
+            </div>
+        </header>
+
+        <!-- Contenedor de la tabla con scroll horizontal para pantallas chicas -->
+        <div class="table-wrapper">
+            <table id="configTable">
+                <thead>
+                    <!-- Fila 1: Encabezados principales agrupados -->
+                    <tr class="header-group">
+                        <th rowspan="2" class="Num_Etapa">N° Etapa</th>
+                        <th colspan="2">Edad (Días)</th>
+                        <th colspan="2">SP Temp (°C)</th>
+                        <th colspan="2">SP Hum (%)</th>
+                        <th colspan="2">SP Luz (%)</th>
+                        <th colspan="4">Horarios de iluminación</th>
+                        <th rowspan="2" class="col-action">Acción</th>
+                    </tr>
+                    <!-- Fila 2: Sub-encabezados específicos -->
+                    <tr class="header-sub">
+                        <th>Inicio</th>
+                        <th>Fin</th>
+                        <th>Temp min</th>
+                        <th>Temp max</th>
+                        <th>HR min</th>
+                        <th>HR max</th>
+                        <th>%Luz min</th>
+                        <th>%Luz max</th>
+                        <th colspan="2">Inicio</th>
+                        <th colspan="2">Fin</th>
+                    </tr>
+                </thead>
+                <tbody id="tableBody">
+                    <!-- Las filas se generan dinámicamente desde app.js -->
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Mensaje de estado (feedback al guardar o validar) -->
+        <div id="statusMessage" class="status-message hidden"></div>
+    </main>
+
+    <!-- Lógica modular separada -->
+    <script type="module" src= "firebase-config.js"></script>
+    <script type="module" src="script.js"></script>
+</body>
+</html>
