@@ -30,16 +30,13 @@ const statusMessage = document.getElementById('statusMessage');
 /**
  * Genera el HTML de un input numérico con su etiqueta de unidad opcional
  */
-function createInputCell(rowIndex, field, value, unit = '', min, max, step) {
+function createInputCell(rowIndex, field, value, unit = '') {
     return `
         <td>
             <div class="input-group">
                 <input 
                     type="number" 
                     value="${value}" 
-                    min="${min}" 
-                    max="${max}" 
-                    step="${step}"
                     data-row="${rowIndex}" 
                     data-field="${field}"
                 >
@@ -55,11 +52,11 @@ function createInputCell(rowIndex, field, value, unit = '', min, max, step) {
 function renderTable() {
     tableBody.innerHTML = configRows.map((row, index) => `
         <tr>   
-            ${createInputCell(index, 'etapa', index +1 , '', 0, 120, 1)}
+            ${createInputCell(index, 'etapa', index +1 , '')}
             
             <!-- Edad (Días) -->
-            ${createInputCell(index, 'dayStart', row.dayStart, 'd', 0, 365, 1)}
-            ${createInputCell(index, 'dayEnd',   row.dayEnd,   'd', 0, 24, 1)}
+            ${createInputCell(index, 'dayStart', row.dayStart, 'd')}
+            ${createInputCell(index, 'dayEnd',   row.dayEnd,   'd')}
             
             <!-- SP Temp (°C) -->
             ${createInputCell(index, 'tempMin',  row.tempMin,  '°C',  10, 45, 1)}
