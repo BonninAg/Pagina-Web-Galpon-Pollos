@@ -1,8 +1,6 @@
 import { ref, set } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 import { db } from "./firebase-config.js";
 
-var Error_De_Campo = null;
-
 /**
  * Módulo de Configuración de Parámetros Avícolas
  * Estructura limpia y escalable para conectar fácilmente con ESP32 / Backend.
@@ -10,12 +8,12 @@ var Error_De_Campo = null;
 
 // 1. ESTADO INICIAL (Datos exactos de la tabla de referencia)
 const INITIAL_CONFIG = [
-    { Dia_Desde: 0,  Dia_Hasta: 3,  Temp_Min: 30, Temp_Max: 32, Hum_Min: 50, Hum_Max: 60, Luz_Min: 40, Luz_Max: 50, Hora_Desde: 5, Minuto_Desde: 30, Hora_Hasta: 22, Minuto_Hasta: 30 },
-    { Dia_Desde: 3,  Dia_Hasta: 7,  Temp_Min: 28, Temp_Max: 30, Hum_Min: 50, Hum_Max: 60, Luz_Min: 40, Luz_Max: 50, Hora_Desde: 5, Minuto_Desde: 30, Hora_Hasta: 22, Minuto_Hasta: 30 },
-    { Dia_Desde: 8,  Dia_Hasta: 14, Temp_Min: 26, Temp_Max: 28, Hum_Min: 50, Hum_Max: 60, Luz_Min: 10, Luz_Max: 20, Hora_Desde: 5, Minuto_Desde: 30, Hora_Hasta: 22, Minuto_Hasta: 30 },
-    { Dia_Desde: 15, Dia_Hasta: 21, Temp_Min: 24, Temp_Max: 26, Hum_Min: 50, Hum_Max: 60, Luz_Min: 10, Luz_Max: 20, Hora_Desde: 5, Minuto_Desde: 30, Hora_Hasta: 22, Minuto_Hasta: 30 },
-    { Dia_Desde: 22, Dia_Hasta: 28, Temp_Min: 22, Temp_Max: 24, Hum_Min: 50, Hum_Max: 70, Luz_Min: 10, Luz_Max: 20, Hora_Desde: 5, Minuto_Desde: 30, Hora_Hasta: 22, Minuto_Hasta: 30 },
-    { Dia_Desde: 28, Dia_Hasta: 46, Temp_Min: 20, Temp_Max: 22, Hum_Min: 50, Hum_Max: 70, Luz_Min: 10, Luz_Max: 20, Hora_Desde: 5, Minuto_Desde: 30, Hora_Hasta: 22, Minuto_Hasta: 30 }
+    {Dia_Desde: 0,  Dia_Hasta: 3,  Temp_Min: 30, Temp_Max: 32, Hum_Min: 50, Hum_Max: 60, Luz_Min: 40, Luz_Max: 50, Hora_Desde: 5, Minuto_Desde: 30, Hora_Hasta: 22, Minuto_Hasta: 30 },
+    {Dia_Desde: 3,  Dia_Hasta: 7,  Temp_Min: 28, Temp_Max: 30, Hum_Min: 50, Hum_Max: 60, Luz_Min: 40, Luz_Max: 50, Hora_Desde: 5, Minuto_Desde: 30, Hora_Hasta: 22, Minuto_Hasta: 30 },
+    {Dia_Desde: 8,  Dia_Hasta: 14, Temp_Min: 26, Temp_Max: 28, Hum_Min: 50, Hum_Max: 60, Luz_Min: 10, Luz_Max: 20, Hora_Desde: 5, Minuto_Desde: 30, Hora_Hasta: 22, Minuto_Hasta: 30 },
+    {Dia_Desde: 15, Dia_Hasta: 21, Temp_Min: 24, Temp_Max: 26, Hum_Min: 50, Hum_Max: 60, Luz_Min: 10, Luz_Max: 20, Hora_Desde: 5, Minuto_Desde: 30, Hora_Hasta: 22, Minuto_Hasta: 30 },
+    {Dia_Desde: 22, Dia_Hasta: 28, Temp_Min: 22, Temp_Max: 24, Hum_Min: 50, Hum_Max: 70, Luz_Min: 10, Luz_Max: 20, Hora_Desde: 5, Minuto_Desde: 30, Hora_Hasta: 22, Minuto_Hasta: 30 },
+    {Dia_Desde: 28, Dia_Hasta: 46, Temp_Min: 20, Temp_Max: 22, Hum_Min: 50, Hum_Max: 70, Luz_Min: 10, Luz_Max: 20, Hora_Desde: 5, Minuto_Desde: 30, Hora_Hasta: 22, Minuto_Hasta: 30 }
 ];
 
 // Copia de trabajo que el usuario va modificando
@@ -179,12 +177,7 @@ btnReset.addEventListener('click', () => {
 });
 
 btnSave.addEventListener('click', async () => {
-    
-    if (Error_De_Campo) {
-        showStatus(Error_De_Campo, true);
-        return;
-    }
-   
+  
     const error = validarConfiguracion();
     if (error) {
         showStatus(error, true);
@@ -212,7 +205,7 @@ async function saveConfigToFirebase() {
         const payload = {};
 
         configRows.forEach((row, index) => {
-            payload[`Etapa_${index + 1}`] = row;
+            payload[`${index}`] = row;
         });
 
         // Referencia al nodo donde se guardará la configuración
