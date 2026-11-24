@@ -8,12 +8,12 @@ import { db } from "./firebase-config.js";
 
 // 1. ESTADO INICIAL (Datos exactos de la tabla de referencia)
 const INITIAL_CONFIG = [
-    { etapa: 1, dayStart: 0,  dayEnd: 3,  tempMin: 30, tempMax: 32, hrMin: 50, hrMax: 60, lightMin: 40, lightMax: 50, onHour: 5, onMin: 30, offHour: 22, offMin: 30 },
-    { etapa: 2, dayStart: 3,  dayEnd: 7,  tempMin: 28, tempMax: 30, hrMin: 50, hrMax: 60, lightMin: 40, lightMax: 50, onHour: 5, onMin: 30, offHour: 22, offMin: 30 },
-    { etapa: 3, dayStart: 8,  dayEnd: 14, tempMin: 26, tempMax: 28, hrMin: 50, hrMax: 60, lightMin: 10, lightMax: 20, onHour: 5, onMin: 30, offHour: 22, offMin: 30 },
-    { etapa: 4, dayStart: 15, dayEnd: 21, tempMin: 24, tempMax: 26, hrMin: 50, hrMax: 60, lightMin: 10, lightMax: 20, onHour: 5, onMin: 30, offHour: 22, offMin: 30 },
-    { etapa: 5, dayStart: 22, dayEnd: 28, tempMin: 22, tempMax: 24, hrMin: 50, hrMax: 70, lightMin: 10, lightMax: 20, onHour: 5, onMin: 30, offHour: 22, offMin: 30 },
-    { etapa: 6, dayStart: 29, dayEnd: 46, tempMin: 20, tempMax: 22, hrMin: 50, hrMax: 70, lightMin: 10, lightMax: 20, onHour: 5, onMin: 30, offHour: 22, offMin: 30 }
+    { dayStart: 0,  dayEnd: 3,  tempMin: 30, tempMax: 32, hrMin: 50, hrMax: 60, lightMin: 40, lightMax: 50, onHour: 5, onMin: 30, offHour: 22, offMin: 30 },
+    { dayStart: 3,  dayEnd: 7,  tempMin: 28, tempMax: 30, hrMin: 50, hrMax: 60, lightMin: 40, lightMax: 50, onHour: 5, onMin: 30, offHour: 22, offMin: 30 },
+    { dayStart: 8,  dayEnd: 14, tempMin: 26, tempMax: 28, hrMin: 50, hrMax: 60, lightMin: 10, lightMax: 20, onHour: 5, onMin: 30, offHour: 22, offMin: 30 },
+    { dayStart: 15, dayEnd: 21, tempMin: 24, tempMax: 26, hrMin: 50, hrMax: 60, lightMin: 10, lightMax: 20, onHour: 5, onMin: 30, offHour: 22, offMin: 30 },
+    { dayStart: 22, dayEnd: 28, tempMin: 22, tempMax: 24, hrMin: 50, hrMax: 70, lightMin: 10, lightMax: 20, onHour: 5, onMin: 30, offHour: 22, offMin: 30 },
+    { dayStart: 29, dayEnd: 46, tempMin: 20, tempMax: 22, hrMin: 50, hrMax: 70, lightMin: 10, lightMax: 20, onHour: 5, onMin: 30, offHour: 22, offMin: 30 }
 ];
 
 // Copia de trabajo que el usuario va modificando
@@ -30,15 +30,19 @@ const statusMessage = document.getElementById('statusMessage');
 /**
  * Genera el HTML de un input numérico con su etiqueta de unidad opcional
  */
-function createInputCell(rowIndex, field, value, unit = '') {
+function createInputCell(rowIndex, field, value, unit = '', min, max, step) {
     return `
         <td>
             <div class="input-group">
                 <input 
                     type="number" 
                     value="${value}" 
+                    min="${min}" 
+                    max="${max}" 
+                    step="${step}"
                     data-row="${rowIndex}" 
                     data-field="${field}"
+                    
                 >
                 ${unit ? `<span class="unit">${unit}</span>` : ''}
             </div>
@@ -52,15 +56,15 @@ function createInputCell(rowIndex, field, value, unit = '') {
 function renderTable() {
     tableBody.innerHTML = configRows.map((row, index) => `
         <tr>   
-            ${createInputCell(index, 'etapa', index +1 , '')}
-            
+            <td> ${index +1} </td>
+
             <!-- Edad (Días) -->
-            ${createInputCell(index, 'dayStart', row.dayStart, 'd')}
-            ${createInputCell(index, 'dayEnd',   row.dayEnd,   'd')}
+            ${createInputCell(index, 'dayStart', row.dayStart, 'd', 0, 365, 1)}
+            ${createInputCell(index, 'dayEnd',   row.dayEnd,   'd', 0, 365, 1)}
             
             <!-- SP Temp (°C) -->
-            ${createInputCell(index, 'tempMin',  row.tempMin,  '°C',  10, 45, 1)}
-            ${createInputCell(index, 'tempMax',  row.tempMax,  '°C',  10, 45, 1)}
+            ${createInputCell(index, 'tempMin',  row.tempMin,  '°C',  10, 45, 0.1)}
+            ${createInputCell(index, 'tempMax',  row.tempMax,  '°C',  10, 45, 0.1)}
             
             <!-- SP Hum (%) -->
             ${createInputCell(index, 'hrMin',    row.hrMin,    '%', 0, 100, 1)}
@@ -87,18 +91,44 @@ function renderTable() {
 }
 
 // 4. MANEJADORES DE EVENTOS (Delegación de eventos para mayor eficiencia)
-tableBody.addEventListener('change', (e) => {
-    if (e.target.tagName === 'INPUT') {
-        const rowIndex = Number(e.target.dataset.row);
-        const field = e.target.dataset.field;
-        const val = parseFloat(e.target.value) || 0;
-        
-        configRows[rowIndex][field] = val;
+tableBody.addEventListener('change', (Input_Box) => {
+    if (Input_Box.target.tagName !== 'INPUT') {
+        return;
     }
+
+    const rowIndex = Number(Input_Box.target.dataset.row);
+    const field = Input_Box.target.dataset.field;
+    const val = parseFloat(Input_Box.target.value) || 0;
+    configRows[rowIndex][field] = val;
+    
+    const estado = Input_Box.target.validity;
+    const min = Input_Box.target.min;
+    const max = Input_Box.target.max;
+    validarCampo(estado, min, max);
+
 });
 
-tableBody.addEventListener('click', (e) => {
-    const deleteBtn = e.target.closest('[data-delete]');
+function validarCampo(estado, min, max) {
+
+  if (estado.valueMissing) {
+    showStatus("El campo no puede estar vacío.", true);
+
+  } else if (estado.rangeUnderflow) {
+    showStatus(`El número debe ser mayor o igual a '${min}'.`, true);
+
+  } else if (estado.rangeOverflow) {
+    showStatus(`El número debe ser menor o igual a '${max}'.`, true);
+
+  } else if (estado.badInput) {
+    showStatus("Por favor, ingresa un número válido.", true);
+
+  } else if (estado.stepMismatch) {
+    showStatus("No se permiten decimales. Ingresa un número entero.", true);
+  }
+}
+
+tableBody.addEventListener('click', (Input_Box) => {
+    const deleteBtn = Input_Box.target.closest('[data-delete]');
     if (deleteBtn) {
         if (configRows.length <= 1) {
             showStatus('Debe existir al menos una etapa en la tabla.', true);
@@ -203,40 +233,14 @@ function validarRangos(row) {
     if (row.tempMin >= row.tempMax) {
         return "La temperatura mínima debe ser menor que la máxima.";
     }
-
     if (row.hrMin >= row.hrMax) {
         return "La humedad mínima debe ser menor que la máxima.";
     }
-
     if (row.lightMin >= row.lightMax) {
         return "La luz mínima debe ser menor que la máxima.";
     }
-
     return null;
 }
-
-
-/*
-function validarRangos(row) {
-
-    let validado = true;
-
-    if (row.tempMin >= row.tempMax) {
-        showStatus("La temperatura mínima debe ser menor que la máxima.", true);
-        validado = false;
-    }
-    if (row.hrMin >= row.hrMax) {
-        showStatus("La humedad mínima debe ser menor que la máxima.", true);
-        validado = false;
-    } 
-    if (row.lightMin >= row.lightMax) {
-        showStatus("La luz mínima debe ser menor que la máxima.", true);
-        validado = false;
-    }
-    return validado;
-}
-*/
-
 
 
 // 6. INICIALIZACIÓN
