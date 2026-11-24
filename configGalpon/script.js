@@ -1,7 +1,7 @@
 import { ref, set } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 import { db } from "./firebase-config.js";
 
-const Campo_Validado = false;
+var Error_De_Campo = null;
 
 /**
  * Módulo de Configuración de Parámetros Avícolas
@@ -44,7 +44,6 @@ function createInputCell(rowIndex, field, value, unit = '', min, max, step) {
                     step="${step}"
                     data-row="${rowIndex}" 
                     data-field="${field}"
-                    
                 >
                 ${unit ? `<span class="unit">${unit}</span>` : ''}
             </div>
@@ -106,27 +105,36 @@ tableBody.addEventListener('change', (Input_Box) => {
     const estado = Input_Box.target.validity;
     const min = Input_Box.target.min;
     const max = Input_Box.target.max;
-    validarCampo (estado, min, max);
+    Error_De_Campo = validarCampo (estado, min, max);
 
 });
 
 function validarCampo(estado, min, max) {
-
+   
   if (estado.valueMissing) {
     showStatus("El campo no puede estar vacío.", true);
-
+    Error_De_Campo = "El campo no puede estar vacío."
+    
   } else if (estado.rangeUnderflow) {
     showStatus(`El número debe ser mayor o igual a '${min}'.`, true);
+    Error_De_Campo = `El número debe ser mayor o igual a '${min}'.`;
 
   } else if (estado.rangeOverflow) {
     showStatus(`El número debe ser menor o igual a '${max}'.`, true);
+    Error_De_Campo = `El número debe ser menor o igual a '${max}'.`;
 
   } else if (estado.badInput) {
     showStatus("Por favor, ingresa un número válido.", true);
+    Error_De_Campo = "Por favor, ingresa un número válido.";
 
   } else if (estado.stepMismatch) {
     showStatus("No se permiten decimales. Ingresa un número entero.", true);
+    Error_De_Campo = "No se permiten decimales. Ingresa un número entero.";
+  } else {
+    Error_De_Campo = null;
   }
+
+  return Error_De_Campo;
 }
 
 tableBody.addEventListener('click', (Input_Box) => {
@@ -171,8 +179,13 @@ btnReset.addEventListener('click', () => {
 });
 
 btnSave.addEventListener('click', async () => {
+    
+    if (Error_De_Campo) {
+        showStatus(Error_De_Campo, true);
+        return;
+    }
+   
     const error = validarConfiguracion();
-
     if (error) {
         showStatus(error, true);
         return;
