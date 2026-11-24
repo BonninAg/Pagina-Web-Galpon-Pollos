@@ -1,6 +1,8 @@
 import { ref, set } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 import { db } from "./firebase-config.js";
 
+const Campo_Validado = false;
+
 /**
  * Módulo de Configuración de Parámetros Avícolas
  * Estructura limpia y escalable para conectar fácilmente con ESP32 / Backend.
@@ -8,12 +10,12 @@ import { db } from "./firebase-config.js";
 
 // 1. ESTADO INICIAL (Datos exactos de la tabla de referencia)
 const INITIAL_CONFIG = [
-    { dayStart: 0,  dayEnd: 3,  tempMin: 30, tempMax: 32, hrMin: 50, hrMax: 60, lightMin: 40, lightMax: 50, onHour: 5, onMin: 30, offHour: 22, offMin: 30 },
-    { dayStart: 3,  dayEnd: 7,  tempMin: 28, tempMax: 30, hrMin: 50, hrMax: 60, lightMin: 40, lightMax: 50, onHour: 5, onMin: 30, offHour: 22, offMin: 30 },
-    { dayStart: 8,  dayEnd: 14, tempMin: 26, tempMax: 28, hrMin: 50, hrMax: 60, lightMin: 10, lightMax: 20, onHour: 5, onMin: 30, offHour: 22, offMin: 30 },
-    { dayStart: 15, dayEnd: 21, tempMin: 24, tempMax: 26, hrMin: 50, hrMax: 60, lightMin: 10, lightMax: 20, onHour: 5, onMin: 30, offHour: 22, offMin: 30 },
-    { dayStart: 22, dayEnd: 28, tempMin: 22, tempMax: 24, hrMin: 50, hrMax: 70, lightMin: 10, lightMax: 20, onHour: 5, onMin: 30, offHour: 22, offMin: 30 },
-    { dayStart: 29, dayEnd: 46, tempMin: 20, tempMax: 22, hrMin: 50, hrMax: 70, lightMin: 10, lightMax: 20, onHour: 5, onMin: 30, offHour: 22, offMin: 30 }
+    { Dia_Desde: 0,  Dia_Hasta: 3,  Temp_Min: 30, Temp_Max: 32, Hum_Min: 50, Hum_Max: 60, Luz_Min: 40, Luz_Max: 50, Hora_Desde: 5, Minuto_Desde: 30, Hora_Hasta: 22, Minuto_Hasta: 30 },
+    { Dia_Desde: 3,  Dia_Hasta: 7,  Temp_Min: 28, Temp_Max: 30, Hum_Min: 50, Hum_Max: 60, Luz_Min: 40, Luz_Max: 50, Hora_Desde: 5, Minuto_Desde: 30, Hora_Hasta: 22, Minuto_Hasta: 30 },
+    { Dia_Desde: 8,  Dia_Hasta: 14, Temp_Min: 26, Temp_Max: 28, Hum_Min: 50, Hum_Max: 60, Luz_Min: 10, Luz_Max: 20, Hora_Desde: 5, Minuto_Desde: 30, Hora_Hasta: 22, Minuto_Hasta: 30 },
+    { Dia_Desde: 15, Dia_Hasta: 21, Temp_Min: 24, Temp_Max: 26, Hum_Min: 50, Hum_Max: 60, Luz_Min: 10, Luz_Max: 20, Hora_Desde: 5, Minuto_Desde: 30, Hora_Hasta: 22, Minuto_Hasta: 30 },
+    { Dia_Desde: 22, Dia_Hasta: 28, Temp_Min: 22, Temp_Max: 24, Hum_Min: 50, Hum_Max: 70, Luz_Min: 10, Luz_Max: 20, Hora_Desde: 5, Minuto_Desde: 30, Hora_Hasta: 22, Minuto_Hasta: 30 },
+    { Dia_Desde: 28, Dia_Hasta: 46, Temp_Min: 20, Temp_Max: 22, Hum_Min: 50, Hum_Max: 70, Luz_Min: 10, Luz_Max: 20, Hora_Desde: 5, Minuto_Desde: 30, Hora_Hasta: 22, Minuto_Hasta: 30 }
 ];
 
 // Copia de trabajo que el usuario va modificando
@@ -59,28 +61,28 @@ function renderTable() {
             <td> ${index +1} </td>
 
             <!-- Edad (Días) -->
-            ${createInputCell(index, 'dayStart', row.dayStart, 'd', 0, 365, 1)}
-            ${createInputCell(index, 'dayEnd',   row.dayEnd,   'd', 0, 365, 1)}
+            ${createInputCell(index, 'dayStart', row.Dia_Desde, 'd', 0, 365, 1)}
+            ${createInputCell(index, 'dayEnd',   row.Dia_Hasta,   'd', 0, 365, 1)}
             
             <!-- SP Temp (°C) -->
-            ${createInputCell(index, 'tempMin',  row.tempMin,  '°C',  10, 45, 0.1)}
-            ${createInputCell(index, 'tempMax',  row.tempMax,  '°C',  10, 45, 0.1)}
+            ${createInputCell(index, 'tempMin',  row.Temp_Min,  '°C',  10, 45, 0.1)}
+            ${createInputCell(index, 'tempMax',  row.Temp_Max,  '°C',  10, 45, 0.1)}
             
             <!-- SP Hum (%) -->
-            ${createInputCell(index, 'hrMin',    row.hrMin,    '%', 0, 100, 1)}
-            ${createInputCell(index, 'hrMax',    row.hrMax,    '%', 0, 100, 1)}
+            ${createInputCell(index, 'hrMin',    row.Hum_Min,    '%', 0, 100, 1)}
+            ${createInputCell(index, 'hrMax',    row.Hum_Max,    '%', 0, 100, 1)}
             
             <!-- SP Luz (%) -->
-            ${createInputCell(index, 'lightMin', row.lightMin, '%', 0, 100, 1)}
-            ${createInputCell(index, 'lightMax', row.lightMax, '%', 0, 100, 1)}
+            ${createInputCell(index, 'lightMin', row.Luz_Min, '%', 0, 100, 1)}
+            ${createInputCell(index, 'lightMax', row.Luz_Max, '%', 0, 100, 1)}
             
             <!-- Horarios de iluminación: Inicio (hs / m) -->
-            ${createInputCell(index, 'onHour',   row.onHour,   'hs', 0, 23, 1)}
-            ${createInputCell(index, 'onMin',    row.onMin,    'm',  0, 59, 1)}
+            ${createInputCell(index, 'onHour',   row.Hora_Desde,   'hs', 0, 23, 1)}
+            ${createInputCell(index, 'onMin',    row.Minuto_Desde,    'm',  0, 59, 1)}
             
             <!-- Horarios de iluminación: Fin (hs / m) -->
-            ${createInputCell(index, 'offHour',  row.offHour,  'hs', 0, 23, 1)}
-            ${createInputCell(index, 'offMin',   row.offMin,   'm',  0, 59, 1)}
+            ${createInputCell(index, 'offHour',  row.Hora_Hasta,  'hs', 0, 23, 1)}
+            ${createInputCell(index, 'offMin',   row.Minuto_Hasta,   'm',  0, 59, 1)}
             
             <!-- Eliminar fila -->
             <td>
@@ -104,7 +106,7 @@ tableBody.addEventListener('change', (Input_Box) => {
     const estado = Input_Box.target.validity;
     const min = Input_Box.target.min;
     const max = Input_Box.target.max;
-    validarCampo(estado, min, max);
+    validarCampo (estado, min, max);
 
 });
 
@@ -142,21 +144,21 @@ tableBody.addEventListener('click', (Input_Box) => {
 
 btnAddRow.addEventListener('click', () => {
     const lastRow = configRows[configRows.length - 1];
-    const nextStart = lastRow ? lastRow.dayEnd + 1 : 0;
+    const nextStart = lastRow ? lastRow.Dia_Hasta + 1 : 0;
 
     configRows.push({
-        dayStart: nextStart,
-        dayEnd: nextStart + 7,
-        tempMin: lastRow ? Math.max(18, lastRow.tempMin - 2) : 20,
-        tempMax: lastRow ? Math.max(20, lastRow.tempMax - 2) : 22,
-        hrMin: 50,
-        hrMax: 70,
-        lightMin: 10,
-        lightMax: 20,
-        onHour: 5,
-        onMin: 30,
-        offHour: 22,
-        offMin: 30
+        Dia_Desde: nextStart,
+        Dia_Hasta: nextStart + 7,
+        Temp_Min: lastRow ? Math.max(18, lastRow.Temp_Min - 2) : 20,
+        Temp_Max: lastRow ? Math.max(20, lastRow.Temp_Max - 2) : 22,
+        Hum_Min: 50,
+        Hum_Max: 70,
+        Luz_Min: 10,
+        Luz_Max: 20,
+        Hora_Desde: 5,
+        Minuto_Desde: 30,
+        Hora_Hasta: 22,
+        Minuto_Hasta: 30
     });
 
     renderTable();
@@ -169,14 +171,12 @@ btnReset.addEventListener('click', () => {
 });
 
 btnSave.addEventListener('click', async () => {
-
     const error = validarConfiguracion();
 
     if (error) {
         showStatus(error, true);
         return;
     }
-
     await saveConfigToFirebase();
 });
 
@@ -190,7 +190,7 @@ function showStatus(text, isError = false) {
 
     setTimeout(() => {
         statusMessage.classList.add('hidden');
-    }, 4000);
+    }, 10000);
 }
 
 async function saveConfigToFirebase() {
@@ -230,13 +230,13 @@ function validarConfiguracion() {
     return null;
 }
 function validarRangos(row) {
-    if (row.tempMin >= row.tempMax) {
+    if (row.Temp_Min >= row.Temp_Max) {
         return "La temperatura mínima debe ser menor que la máxima.";
     }
-    if (row.hrMin >= row.hrMax) {
+    if (row.Hum_Min >= row.Hum_Max) {
         return "La humedad mínima debe ser menor que la máxima.";
     }
-    if (row.lightMin >= row.lightMax) {
+    if (row.Luz_Min >= row.Luz_Max) {
         return "La luz mínima debe ser menor que la máxima.";
     }
     return null;

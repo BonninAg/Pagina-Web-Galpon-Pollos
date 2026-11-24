@@ -175,8 +175,9 @@ border-color: var(--accent-primary);
 }
 
 input:invalid {
-  border: 2px solid red;
-  background-color: #f522226c; /* Fondo rojo suave */
+  border: 1px solid var(--danger);
+  color: var(--danger);
+  background-color: rgba(16, 185, 129, 0.15); /* Fondo rojo suave */
   outline: none;
 }
 
