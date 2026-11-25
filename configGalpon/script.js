@@ -9,11 +9,11 @@ import { db } from "./firebase-config.js";
 // 1. ESTADO INICIAL (Datos exactos de la tabla de referencia)
 const INITIAL_CONFIG = [
     {Dia_Desde: 0,  Dia_Hasta: 3,  Temp_Min: 30, Temp_Max: 32, Hum_Min: 50, Hum_Max: 60, Luz_Min: 40, Luz_Max: 50, Hora_Desde: 5, Minuto_Desde: 30, Hora_Hasta: 22, Minuto_Hasta: 30 },
-    {Dia_Desde: 3,  Dia_Hasta: 7,  Temp_Min: 28, Temp_Max: 30, Hum_Min: 50, Hum_Max: 60, Luz_Min: 40, Luz_Max: 50, Hora_Desde: 5, Minuto_Desde: 30, Hora_Hasta: 22, Minuto_Hasta: 30 },
+    {Dia_Desde: 4,  Dia_Hasta: 7,  Temp_Min: 28, Temp_Max: 30, Hum_Min: 50, Hum_Max: 60, Luz_Min: 40, Luz_Max: 50, Hora_Desde: 5, Minuto_Desde: 30, Hora_Hasta: 22, Minuto_Hasta: 30 },
     {Dia_Desde: 8,  Dia_Hasta: 14, Temp_Min: 26, Temp_Max: 28, Hum_Min: 50, Hum_Max: 60, Luz_Min: 10, Luz_Max: 20, Hora_Desde: 5, Minuto_Desde: 30, Hora_Hasta: 22, Minuto_Hasta: 30 },
     {Dia_Desde: 15, Dia_Hasta: 21, Temp_Min: 24, Temp_Max: 26, Hum_Min: 50, Hum_Max: 60, Luz_Min: 10, Luz_Max: 20, Hora_Desde: 5, Minuto_Desde: 30, Hora_Hasta: 22, Minuto_Hasta: 30 },
     {Dia_Desde: 22, Dia_Hasta: 28, Temp_Min: 22, Temp_Max: 24, Hum_Min: 50, Hum_Max: 70, Luz_Min: 10, Luz_Max: 20, Hora_Desde: 5, Minuto_Desde: 30, Hora_Hasta: 22, Minuto_Hasta: 30 },
-    {Dia_Desde: 28, Dia_Hasta: 46, Temp_Min: 20, Temp_Max: 22, Hum_Min: 50, Hum_Max: 70, Luz_Min: 10, Luz_Max: 20, Hora_Desde: 5, Minuto_Desde: 30, Hora_Hasta: 22, Minuto_Hasta: 30 }
+    {Dia_Desde: 29, Dia_Hasta: 46, Temp_Min: 20, Temp_Max: 22, Hum_Min: 50, Hum_Max: 70, Luz_Min: 10, Luz_Max: 20, Hora_Desde: 5, Minuto_Desde: 30, Hora_Hasta: 22, Minuto_Hasta: 30 }
 ];
 
 // Copia de trabajo que el usuario va modificando
@@ -218,7 +218,7 @@ async function saveConfigToFirebase() {
 
 function validarConfiguracion() {
     for (let i = 0; i < configRows.length; i++) {
-
+        // Validaciones de consistencia para cada fila
         const row = configRows[i];
         if (row.Dia_Desde > row.Dia_Hasta) {
             showStatus(`Etapa ${i + 1}: La fecha de inicio debe ser anterior a la fecha de finalización.`, true);
@@ -244,6 +244,12 @@ function validarConfiguracion() {
             showStatus(`Etapa ${i + 1}: El minuto de inicio debe ser anterior al minuto de finalización.`, true);
             return false;
         }
+        // Validación de solapamiento entre etapas
+        if (i < configRows.length - 1 && row.Dia_Hasta >= configRows[i + 1].Dia_Desde ) {
+            showStatus(`Se solapan los días de la Etapa ${i + 1} con la Etapa ${i + 2}.`, true);
+            return false;
+        }        
+
     }
 return true;
 }
