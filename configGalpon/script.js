@@ -35,13 +35,15 @@ function createInputCell(rowIndex, field, value, unit = '', min, max, step) {
         <td>
             <div class="input-group">
                 <input 
-                    type="number" 
+                    type="number"
+                    id="Fila${rowIndex}-${field}" 
                     value="${value}" 
                     min="${min}" 
                     max="${max}" 
                     step="${step}"
                     data-row="${rowIndex}" 
                     data-field="${field}"
+                    required
                 >
                 ${unit ? `<span class="unit">${unit}</span>` : ''}
             </div>
@@ -58,28 +60,28 @@ function renderTable() {
             <td> ${index +1} </td>
 
             <!-- Edad (Días) -->
-            ${createInputCell(index, 'dayStart', row.Dia_Desde, 'd', 0, 365, 1)}
-            ${createInputCell(index, 'dayEnd',   row.Dia_Hasta,   'd', 0, 365, 1)}
-            
+            ${createInputCell(index, 'Dia_Desde', row.Dia_Desde,     'd', 0, 365, 1)}
+            ${createInputCell(index, 'Dia_Hasta',   row.Dia_Hasta,   'd', 0, 365, 1)}
+             
             <!-- SP Temp (°C) -->
-            ${createInputCell(index, 'tempMin',  row.Temp_Min,  '°C',  10, 45, 0.1)}
-            ${createInputCell(index, 'tempMax',  row.Temp_Max,  '°C',  10, 45, 0.1)}
+            ${createInputCell(index, 'Temp_Min',  row.Temp_Min,  '°C',  10, 45, 0.1)}
+            ${createInputCell(index, 'Temp_Max',  row.Temp_Max,  '°C',  10, 45, 0.1)}
             
             <!-- SP Hum (%) -->
-            ${createInputCell(index, 'hrMin',    row.Hum_Min,    '%', 0, 100, 1)}
-            ${createInputCell(index, 'hrMax',    row.Hum_Max,    '%', 0, 100, 1)}
+            ${createInputCell(index, 'Hum_Min',    row.Hum_Min,    '%', 0, 100, 1)}
+            ${createInputCell(index, 'Hum_Max',    row.Hum_Max,    '%', 0, 100, 1)}
             
             <!-- SP Luz (%) -->
-            ${createInputCell(index, 'lightMin', row.Luz_Min, '%', 0, 100, 1)}
-            ${createInputCell(index, 'lightMax', row.Luz_Max, '%', 0, 100, 1)}
+            ${createInputCell(index, 'Luz_Min', row.Luz_Min, '%', 0, 100, 1)}
+            ${createInputCell(index, 'Luz_Max', row.Luz_Max, '%', 0, 100, 1)}
             
             <!-- Horarios de iluminación: Inicio (hs / m) -->
-            ${createInputCell(index, 'onHour',   row.Hora_Desde,   'hs', 0, 23, 1)}
-            ${createInputCell(index, 'onMin',    row.Minuto_Desde,    'm',  0, 59, 1)}
+            ${createInputCell(index, 'Hora_Desde',      row.Hora_Desde,      'hs', 0, 23, 1)}
+            ${createInputCell(index, 'Minuto_Desde',    row.Minuto_Desde,    'm',  0, 59, 1)}
             
             <!-- Horarios de iluminación: Fin (hs / m) -->
-            ${createInputCell(index, 'offHour',  row.Hora_Hasta,  'hs', 0, 23, 1)}
-            ${createInputCell(index, 'offMin',   row.Minuto_Hasta,   'm',  0, 59, 1)}
+            ${createInputCell(index, 'Hora_Hasta',     row.Hora_Hasta,     'hs', 0, 23, 1)}
+            ${createInputCell(index, 'Minuto_Hasta',   row.Minuto_Hasta,   'm',  0, 59, 1)}
             
             <!-- Eliminar fila -->
             <td>
@@ -94,7 +96,6 @@ tableBody.addEventListener('change', (Input_Box) => {
     if (Input_Box.target.tagName !== 'INPUT') {
         return;
     }
-
     const rowIndex = Number(Input_Box.target.dataset.row);
     const field = Input_Box.target.dataset.field;
     const val = parseFloat(Input_Box.target.value) || 0;
@@ -103,37 +104,30 @@ tableBody.addEventListener('change', (Input_Box) => {
     const estado = Input_Box.target.validity;
     const min = Input_Box.target.min;
     const max = Input_Box.target.max;
-    Error_De_Campo = validarCampo (estado, min, max);
 
-});
+   let Contador_Errores = 0;
 
-function validarCampo(estado, min, max) {
-   
   if (estado.valueMissing) {
     showStatus("El campo no puede estar vacío.", true);
-    Error_De_Campo = "El campo no puede estar vacío."
-    
-  } else if (estado.rangeUnderflow) {
-    showStatus(`El número debe ser mayor o igual a '${min}'.`, true);
-    Error_De_Campo = `El número debe ser mayor o igual a '${min}'.`;
-
-  } else if (estado.rangeOverflow) {
-    showStatus(`El número debe ser menor o igual a '${max}'.`, true);
-    Error_De_Campo = `El número debe ser menor o igual a '${max}'.`;
-
-  } else if (estado.badInput) {
-    showStatus("Por favor, ingresa un número válido.", true);
-    Error_De_Campo = "Por favor, ingresa un número válido.";
-
-  } else if (estado.stepMismatch) {
-    showStatus("No se permiten decimales. Ingresa un número entero.", true);
-    Error_De_Campo = "No se permiten decimales. Ingresa un número entero.";
-  } else {
-    Error_De_Campo = null;
+    Contador_Errores++;
   }
-
-  return Error_De_Campo;
-}
+   if (estado.rangeUnderflow) {
+    showStatus(`El número debe ser mayor o igual a '${min}'.`, true);
+    Contador_Errores++;
+  } 
+   if (estado.rangeOverflow) {
+    showStatus(`El número debe ser menor o igual a '${max}'.`, true);
+    Contador_Errores++;;
+  } 
+   if (estado.badInput) {
+    showStatus("Por favor, ingresa un número válido.", true);
+    Contador_Errores++;
+  } 
+   if (estado.stepMismatch) {
+    showStatus("No se permiten decimales. Ingresa un número entero.", true);
+    Contador_Errores++;
+  } 
+});
 
 tableBody.addEventListener('click', (Input_Box) => {
     const deleteBtn = Input_Box.target.closest('[data-delete]');
@@ -178,14 +172,13 @@ btnReset.addEventListener('click', () => {
 
 btnSave.addEventListener('click', async () => {
   
-    const error = validarConfiguracion();
-    if (error) {
-        showStatus(error, true);
+    //const errorValidacion = validarConfiguracion();
+
+    if (validarConfiguracion() == false) {
         return;
     }
     await saveConfigToFirebase();
 });
-
 
 // 5. UTILIDADES
 function showStatus(text, isError = false) {
@@ -196,7 +189,7 @@ function showStatus(text, isError = false) {
 
     setTimeout(() => {
         statusMessage.classList.add('hidden');
-    }, 10000);
+    }, 3000);
 }
 
 async function saveConfigToFirebase() {
@@ -223,31 +216,37 @@ async function saveConfigToFirebase() {
     }
 }
 
-
 function validarConfiguracion() {
     for (let i = 0; i < configRows.length; i++) {
 
         const row = configRows[i];
-        const error = validarRangos(row);
-        if (error) {
-            return `Etapa ${i + 1}: ${error}`;
+        if (row.Dia_Desde > row.Dia_Hasta) {
+            showStatus(`Etapa ${i + 1}: La fecha de inicio debe ser anterior a la fecha de finalización.`, true);
+            return false;
+        }
+        if (row.Temp_Min > row.Temp_Max) {
+            showStatus(`Etapa ${i + 1}: La temperatura mínima debe ser menor que la máxima.`, true);
+            return false;
+        }
+        if (row.Hum_Min > row.Hum_Max) {
+            showStatus(`Etapa ${i + 1}: La humedad mínima debe ser menor que la máxima.`, true);
+            return false;
+        }
+        if (row.Luz_Min > row.Luz_Max) {
+            showStatus(`Etapa ${i + 1}: La luz mínima debe ser menor que la máxima.`, true);
+            return false;
+        }
+        if (row.Hora_Desde > row.Hora_Hasta) {
+            showStatus(`Etapa ${i + 1}: La hora de inicio debe ser anterior a la hora de finalización.`, true);
+            return false;
+        }
+        if ((row.Dia_Desde === row.Dia_Hasta)&&(row.Hora_Desde >= row.Hora_Hasta)&&(row.Minuto_Desde > row.Minuto_Hasta)) {
+            showStatus(`Etapa ${i + 1}: El minuto de inicio debe ser anterior al minuto de finalización.`, true);
+            return false;
         }
     }
-    return null;
+return true;
 }
-function validarRangos(row) {
-    if (row.Temp_Min >= row.Temp_Max) {
-        return "La temperatura mínima debe ser menor que la máxima.";
-    }
-    if (row.Hum_Min >= row.Hum_Max) {
-        return "La humedad mínima debe ser menor que la máxima.";
-    }
-    if (row.Luz_Min >= row.Luz_Max) {
-        return "La luz mínima debe ser menor que la máxima.";
-    }
-    return null;
-}
-
 
 // 6. INICIALIZACIÓN
 renderTable();
