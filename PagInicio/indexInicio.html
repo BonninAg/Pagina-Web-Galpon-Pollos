@@ -6,61 +6,62 @@
     <title>Monitor de Galpón Avícola</title>
     <link rel="stylesheet" href="stylesInicio.css">
 </head>
-<body>
+    <body>
+    <div class="container">
+        <header>
+            <h1>Control de Galpón #1</h1>
+            <div id="reloj-actual" class="reloj">--:--:--</div>
+            <a href="../configGalpon/index.html" class="btn btn-secondary">Configuración</a>
+        </header>
 
-    <header>
-        <h1>Control de Galpón #1</h1>
-        <div id="reloj-actual" class="reloj">--:--:--</div>
-    </header>
+        <main>
+            <!-- Panel de Etapa Actual -->
+            <section class="panel-etapa">
+                <h2>Configuración de Etapa Actual</h2>
+                <div class="datos-etapa">
+                    <p><strong>Etapa:</strong> <span id="etapa-nombre">Cargando...</span></p>
+                    <p><strong>Día de ciclo:</strong> <span id="etapa-dia">--</span></p>
+                    <p><strong>Temp. Objetivo:</strong> <span id="etapa-temp">--</span> °C</p>
+                    <p><strong>Humedad Objetivo:</strong> <span id="etapa-hum">--</span> %</p>
+                    <p><strong>Luz Objetivo:</strong> <span id="etapa-luz">--</span> lx</p>
+                </div>
+            </section>
 
-    <main>
-        <!-- Panel de Etapa Actual -->
-        <section class="panel-etapa">
-            <h2>Configuración de Etapa Actual</h2>
-            <div class="datos-etapa">
-                <p><strong>Etapa:</strong> <span id="etapa-nombre">Cargando...</span></p>
-                <p><strong>Día de ciclo:</strong> <span id="etapa-dia">--</span></p>
-                <p><strong>Temp. Objetivo:</strong> <span id="etapa-temp">--</span> °C</p>
-                <p><strong>Humedad Objetivo:</strong> <span id="etapa-hum">--</span> %</p>
-                <p><strong>Luz Objetivo:</strong> <span id="etapa-luz">--</span> lx</p>
-            </div>
-        </section>
+            <!-- Mapa Interactivo del Galpón -->
+            <section class="panel-mapa">
+                <h2>Distribución de Nodos</h2>
+                <div class="contenedor-galpon" id="mapa-galpon">
+                    <!-- Reemplaza el src con la ruta de tu imagen real del galpón -->
+                    <img src="../Imagenes/Galpon de pollos imagen de inicio.jfif" alt="Plano del Galpón" class="img-fondo">
+                    <!-- Los nodos se inyectan dinámicamente desde app.js -->
+                </div>
+            </section>
 
-        <!-- Mapa Interactivo del Galpón -->
-        <section class="panel-mapa">
-            <h2>Distribución de Nodos</h2>
-            <div class="contenedor-galpon" id="mapa-galpon">
-                <!-- Reemplaza el src con la ruta de tu imagen real del galpón -->
-                <img src="https://placehold.co/800x350/e2e8f0/475569?text=Plano+o+Imagen+del+Galpon" alt="Plano del Galpón" class="img-fondo">
-                <!-- Los nodos se inyectan dinámicamente desde app.js -->
-            </div>
-        </section>
-
-        <!-- Tabla de Promedios -->
-        <section class="panel-promedios">
-            <h2>Lecturas Promedio del Galpón</h2>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Hora de Lectura</th>
-                        <th>Temperatura Promedio</th>
-                        <th>Humedad Promedio</th>
-                        <th>Luz Promedio</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td id="tabla-hora">--:--:--</td>
-                        <td id="prom-temp">-- °C</td>
-                        <td id="prom-hum">-- %</td>
-                        <td id="prom-luz">-- lx</td>
-                    </tr>
-                </tbody>
-            </table>
-        </section>
-    </main>
-
-    <script type="module" src="scriptInicio.js"></script>
-    <a href="../configGalpon/index.html" class="boton-redireccion">Configuración</a>
-</body>
+            <!-- Tabla de Promedios -->
+            <section class="panel-promedios">
+                <h2>Lecturas Promedio del Galpón</h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Hora de Lectura</th>
+                            <th>Temperatura Promedio</th>
+                            <th>Humedad Promedio</th>
+                            <th>Luz Promedio</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td id="tabla-hora">--:--:--</td>
+                            <td id="prom-temp">-- °C</td>
+                            <td id="prom-hum">-- %</td>
+                            <td id="prom-luz">-- lx</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </section>
+        </main>
+    </div>
+        <script type="module" src= "../configGalpon/firebase-config.js"></script>
+        <script type="module" src="scriptInicio.js"></script>
+    </body>
 </html>
