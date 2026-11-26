@@ -96,38 +96,55 @@ tableBody.addEventListener('change', (Input_Box) => {
     if (Input_Box.target.tagName !== 'INPUT') {
         return;
     }
+
+    if (validarCampos() == false) {
+    return;
+    }
+
     const rowIndex = Number(Input_Box.target.dataset.row);
     const field = Input_Box.target.dataset.field;
     const val = parseFloat(Input_Box.target.value) || 0;
     configRows[rowIndex][field] = val;
-    
-    const estado = Input_Box.target.validity;
-    const min = Input_Box.target.min;
-    const max = Input_Box.target.max;
-
-   let Contador_Errores = 0;
-
-  if (estado.valueMissing) {
-    showStatus("El campo no puede estar vacío.", true);
-    Contador_Errores++;
-  }
-   if (estado.rangeUnderflow) {
-    showStatus(`El número debe ser mayor o igual a '${min}'.`, true);
-    Contador_Errores++;
-  } 
-   if (estado.rangeOverflow) {
-    showStatus(`El número debe ser menor o igual a '${max}'.`, true);
-    Contador_Errores++;;
-  } 
-   if (estado.badInput) {
-    showStatus("Por favor, ingresa un número válido.", true);
-    Contador_Errores++;
-  } 
-   if (estado.stepMismatch) {
-    showStatus("No se permiten decimales. Ingresa un número entero.", true);
-    Contador_Errores++;
-  } 
 });
+
+function validarCampos() {
+    const Lista_De_Campos = tableBody.querySelectorAll('input[type="number"]');
+
+    for (const Campo of Lista_De_Campos) {
+        // Si no cumple con algo
+        if (Campo.checkValidity() === false) {
+            
+            const estado = Campo.validity;
+            const min = Campo.min;
+            const max = Campo.max;
+
+            if (estado.valueMissing) {
+                showStatus("El campo no puede estar vacío.", true);
+                return false;
+            }
+            if (estado.rangeUnderflow) {
+                showStatus(`El número debe ser mayor o igual a '${min}'.`, true);
+                return false;
+            } 
+            if (estado.rangeOverflow) {
+                showStatus(`El número debe ser menor o igual a '${max}'.`, true);
+                return false;
+            } 
+            if (estado.badInput) {
+                showStatus("Por favor, ingresa un número válido.", true);
+                return false;
+            } 
+            if (estado.stepMismatch) {
+                showStatus("No se permiten decimales. Ingresa un número entero.", true);
+                return false;
+            }
+        }
+    }
+return true;
+}
+
+
+
 
 tableBody.addEventListener('click', (Input_Box) => {
     const deleteBtn = Input_Box.target.closest('[data-delete]');
@@ -172,8 +189,9 @@ btnReset.addEventListener('click', () => {
 
 btnSave.addEventListener('click', async () => {
   
-    //const errorValidacion = validarConfiguracion();
-
+    if (validarCampos() == false) {
+        return;
+    }
     if (validarConfiguracion() == false) {
         return;
     }
@@ -248,8 +266,11 @@ function validarConfiguracion() {
         if (i < configRows.length - 1 && row.Dia_Hasta >= configRows[i + 1].Dia_Desde ) {
             showStatus(`Se solapan los días de la Etapa ${i + 1} con la Etapa ${i + 2}.`, true);
             return false;
-        }        
-
+        } 
+        if (i < configRows.length - 1 && (row.Dia_Hasta + 1) !== configRows[i + 1].Dia_Desde ) {
+            showStatus(`Hay un hueco de días entre la Etapa ${i + 1} y la Etapa ${i + 2}.`, true);
+            return false;
+        }         
     }
 return true;
 }
