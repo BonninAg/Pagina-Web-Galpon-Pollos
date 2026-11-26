@@ -1,0 +1,118 @@
+:root {
+    --bg-color: #f4f6f9;
+    --card-bg: #ffffff;
+    --primary: #2563eb;
+    --text-main: #1e293b;
+    --border: #cbd5e1;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: system-ui, -apple-system, sans-serif;
+}
+
+body {
+    background-color: var(--bg-color);
+    color: var(--text-main);
+    padding: 20px;
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid var(--border);
+}
+
+.reloj {
+    font-size: 1.2rem;
+    font-weight: bold;
+    background: var(--primary);
+    color: white;
+    padding: 6px 12px;
+    border-radius: 6px;
+}
+
+section {
+    background: var(--card-bg);
+    padding: 15px 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    margin-bottom: 20px;
+}
+
+h2 {
+    font-size: 1.1rem;
+    margin-bottom: 12px;
+    color: var(--primary);
+}
+
+/* Etapa */
+.datos-etapa {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+/* Mapa y Nodos */
+.contenedor-galpon {
+    position: relative;
+    width: 100%;
+    border-radius: 6px;
+    overflow: hidden;
+    border: 1px solid var(--border);
+}
+
+.img-fondo {
+    width: 100%;
+    display: block;
+    height: auto;
+}
+
+.nodo-card {
+    position: absolute;
+    transform: translate(-50%, -50%); /* Centra el nodo en su coordenada */
+    background: rgba(255, 255, 255, 0.92);
+    border: 2px solid var(--primary);
+    border-radius: 8px;
+    padding: 8px;
+    width: 130px;
+    font-size: 0.8rem;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.15);
+    text-align: center;
+}
+
+.nodo-card img {
+    width: 28px;
+    height: 28px;
+    margin-bottom: 4px;
+}
+
+.nodo-titulo {
+    font-weight: bold;
+    display: block;
+    margin-bottom: 4px;
+    color: var(--primary);
+}
+
+/* Tabla */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: center;
+}
+
+th, td {
+    padding: 12px;
+    border: 1px solid var(--border);
+}
+
+th {
+    background-color: #f8fafc;
+}
